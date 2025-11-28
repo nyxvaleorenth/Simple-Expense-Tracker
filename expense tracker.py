@@ -1,0 +1,56 @@
+import csv
+import datetime
+
+
+# -------------------- loading and writing ------------------------------------------------
+def load_data():
+    with open("data.csv", "r") as file:
+        csv_reader = csv.reader(file)
+        data = [row for row in csv_reader]
+    return data
+
+
+def write_data(data):
+    with open("data.csv", "w") as file:
+        csv_writer = csv.writer(file)
+        csv_writer.writerows(data)
+
+
+# -------------------- main functions -----------------------------------------------------
+def add_expense(data):
+    amount = input("Enter the amount: ")
+    category = input("Enter the category: ")
+    note = input("Enter a note: ")
+    date = input("Enter the date (YYYY-mm-dd) (Press enter for today): ")
+    time = input("Enter the time (HH:MM) (Press enter for now): ")
+
+    if not date:
+        date = datetime.datetime.now().strftime("%Y-%m-%d")
+    if not time:
+        time = datetime.datetime.now().strftime("%H:%M")
+
+    data.append([amount, category, note, date, time])
+
+    return data
+
+
+def view_all(data):
+    if not data:
+        print("No expenses found! Add some!")
+        return
+
+    for row in data:
+        print(f"{row[3]} {row[4]} {row[0]} {row[1]} {row[2]}")
+
+
+data = load_data()
+
+while True:
+    print("[1] Add expense", "[2] View all expenses", sep="\n")
+    user_input = input(">>> ")
+
+    if user_input == "1":
+        data = add_expense(data)
+        write_data(data)
+    elif user_input == "2":
+        view_all(data)
