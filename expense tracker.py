@@ -34,7 +34,7 @@ def add_expense(data):
     return data
 
 
-def view_all(data):
+def view_expenses(data):
     if not data:
         print("No expenses found! Add some!")
         return
@@ -43,14 +43,64 @@ def view_all(data):
         print(f"{row[3]} {row[4]} {row[0]} {row[1]} {row[2]}")
 
 
+# -------------------- Filter functions --------------------------------------------------
+def filter_by_date(data):
+    index = 3
+    date = input("Enter the date (Press enter for today): ")
+
+    if not date:
+        date = datetime.datetime.now().strftime("%Y-%m-%d")
+
+    filtered_list = []
+    for row in data:
+        if row[index] == date:
+            filtered_list.append(row)
+
+    return filtered_list
+
+
+def filter_by_category(data):
+    category_index = 1
+    category = input("Enter the category: ")
+
+    filtered_list = []
+    for row in data:
+        if row[category_index] == category:
+            filtered_list.append(row)
+
+    return filtered_list
+
+
+def sum_expenses(data):
+    total = 0.0
+    amount_index = 0
+    for row in data:
+        total += float(row[amount_index])
+    return total
+
+
 data = load_data()
 
 while True:
-    print("[1] Add expense", "[2] View all expenses", sep="\n")
+    print(
+        "[1] Add expense",
+        "[2] View all expenses",
+        "[3] Show total spent by date",
+        "[4] Show total spent by category",
+        sep="\n",
+    )
     user_input = input(">>> ")
 
     if user_input == "1":
         data = add_expense(data)
         write_data(data)
     elif user_input == "2":
-        view_all(data)
+        view_expenses(data)
+    elif user_input == "3":
+        filtered_list = filter_by_date(data)
+        total_spent = sum_expenses(filtered_list)
+        print(f"Total spent: {total_spent}")
+    elif user_input == "4":
+        filtered_list = filter_by_category(data)
+        total_spent = sum_expenses(filtered_list)
+        print(f"Total spent: {total_spent}")
