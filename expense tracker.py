@@ -1,3 +1,9 @@
+"""
+[x] show total by category (list all categories)
+[ ] search
+[ ] refactor
+"""
+
 import csv
 import datetime
 
@@ -60,15 +66,58 @@ def filter_by_date(data):
 
 
 def filter_by_category(data):
-    category_index = 1
-    category = input("Enter the category: ")
+    total = {}
+    for row in data:
+        if row[1] in total:
+            total[row[1]] += float(row[0])
+        else:
+            total[row[1]] = float(row[0])
+
+    for i in total:
+        print(f"{i}: {total[i]}")
+
+
+# -------------------- search functions -------------------------------------------------
+
+
+def search(data):
+    print(
+        "Chose what to search by:",
+        "[1] Category",
+        "[2] Date",
+        "[3] Date range",
+        "[4] Keyword in a note",
+        sep="\n",
+    )
+    user_input = input(">>> ")
 
     filtered_list = []
-    for row in data:
-        if row[category_index] == category:
-            filtered_list.append(row)
+    if user_input == "1":
+        category = input("Enter the category: ")
+        for row in data:
+            if row[1] == category:
+                filtered_list.append(row)
+
+    elif user_input == "2":
+        date = input("Enter the date (YYYY-mm-dd): ")
+        for row in data:
+            if row[3] == date:
+                filtered_list.append(row)
+
+    elif user_input == "3":
+        start_date = input("Enter the start data: ")
+        end_date = input("Enter the end date")
+
+    elif user_input == "4":
+        keyword = input("Enter the keyword: ")
+        for row in data:
+            if keyword in row[2]:
+                filtered_list.append(row)
 
     return filtered_list
+
+
+# -------------------- other ------------------------------------------------------------
 
 
 def sum_expenses(data):
@@ -87,6 +136,7 @@ while True:
         "[2] View all expenses",
         "[3] Show total spent by date",
         "[4] Show total spent by category",
+        "[5] Search",
         sep="\n",
     )
     user_input = input(">>> ")
@@ -101,6 +151,7 @@ while True:
         total_spent = sum_expenses(filtered_list)
         print(f"Total spent: {total_spent}")
     elif user_input == "4":
-        filtered_list = filter_by_category(data)
-        total_spent = sum_expenses(filtered_list)
-        print(f"Total spent: {total_spent}")
+        filter_by_category(data)
+    elif user_input == "5":
+        filtered_data = search(data)
+        view_expenses(filtered_data)
